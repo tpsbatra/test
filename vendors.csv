@@ -1,0 +1,206 @@
+vendor_id,vendor_name,payment_terms_days
+V001,Tamil Electricals Traders,60
+V002,Godavari Fasteners Services,30
+V003,Coastal Printing Industries,15
+V004,Coastal Freight Pvt Ltd,60
+V005,Northern Fasteners Industries,15
+V006,Tamil Office Supplies Traders,30
+V007,Sahyadri Fasteners Pvt Ltd,30
+V008,Eastern Fasteners Services,15
+V009,Northern Steel Pvt Ltd,15
+V010,Western Safety Traders,60
+V011,Aravalli Freight Industries,30
+V012,Eastern Office Supplies Industries,60
+V013,Western Printing Pvt Ltd,15
+V014,Vidarbha Textiles Pvt Ltd,30
+V015,Coastal Chemicals Industries,30
+V016,Eastern Electricals Pvt Ltd,30
+V017,Malabar Components Services,30
+V018,Konkan Logistics Traders,30
+V019,Sharma Packaging Industries,60
+V020,Northern Logistics Pvt Ltd,45
+V021,Kaveri Printing Industries,60
+V022,Tamil Components Traders,60
+V023,Godavari Logistics Industries,15
+V024,Tamil Logistics Pvt Ltd,60
+V025,Malabar Textiles Pvt Ltd,45
+V026,Sharma Office Supplies Services,30
+V027,Southern Textiles Traders,45
+V028,Vidarbha Printing Traders,30
+V029,Southern Chemicals Services,45
+V030,Godavari Printing Traders,60
+V031,Sahyadri Chemicals Services,60
+V032,Aravalli Chemicals Industries,60
+V033,Konkan Components Traders,45
+V034,Nilgiri Chemicals Pvt Ltd,60
+V035,Nilgiri Textiles Traders,30
+V036,Aravalli Packaging Traders,45
+V037,Coastal Freight Traders,60
+V038,Northern Textiles Traders,60
+V039,Kaveri Textiles Industries,15
+V040,Nilgiri Steel Pvt Ltd,45
+V041,Kaveri Safety Services,15
+V042,Western Safety Industries,30
+V043,Western Chemicals Industries,30
+V044,Godavari Office Supplies Services,15
+V045,Vidarbha Electricals Traders,15
+V046,Malabar Fasteners Pvt Ltd,60
+V047,Deccan Packaging Pvt Ltd,45
+V048,Northern Fasteners Pvt Ltd,60
+V049,Eastern Steel Services,30
+V050,Godavari Textiles Pvt Ltd,15
+V051,Sharma Electricals Traders,45
+V052,Nilgiri Safety Traders,30
+V053,Nilgiri Fasteners Pvt Ltd,45
+V054,Malabar Safety Pvt Ltd,30
+V055,Malabar Packaging Pvt Ltd,15
+V056,Kaveri Freight Pvt Ltd,45
+V057,Aravalli Electricals Pvt Ltd,30
+V058,Eastern Chemicals Services,45
+V059,Western Fasteners Services,45
+V060,Coastal Textiles Industries,30
+V061,Tamil Chemicals Services,15
+V062,Malabar Packaging Services,45
+V063,Coastal Fasteners Industries,15
+V064,Eastern Fasteners Industries,60
+V065,Vidarbha Chemicals Pvt Ltd,30
+V066,Aravalli Chemicals Services,15
+V067,Western Office Supplies Traders,15
+V068,Konkan Electricals Pvt Ltd,45
+V069,Vidarbha Fasteners Traders,30
+V070,Eastern Packaging Traders,15
+V071,Coastal Office Supplies Industries,45
+V072,Vidarbha Office Supplies Services,45
+V073,Western Packaging Industries,15
+V074,Southern Freight Traders,45
+V075,Eastern Steel Traders,45
+V076,Sahyadri Fasteners Traders,30
+V077,Tamil Fasteners Pvt Ltd,45
+V078,Kaveri Packaging Industries,45
+V079,Western Logistics Services,15
+V080,Southern Steel Industries,15
+V081,Vidarbha Safety Industries,60
+V082,Northern Steel Traders,45
+V083,Malabar Logistics Services,60
+V084,Coastal Packaging Traders,15
+V085,Deccan Packaging Traders,15
+V086,Coastal Steel Traders,15
+V087,Sahyadri Safety Industries,30
+V088,Tamil Textiles Pvt Ltd,15
+V089,Northern Components Traders,45
+V090,Malabar Printing Services,15
+V091,Coastal Packaging Pvt Ltd,15
+V092,Western Textiles Industries,45
+V093,Vidarbha Steel Services,45
+V094,Western Freight Traders,60
+V095,Aravalli Electricals Services,15
+V096,Godavari Electricals Services,60
+V097,Western Printing Traders,45
+V098,Vidarbha Safety Services,30
+V099,Coastal Printing Traders,60
+V100,Southern Electricals Traders,60
+V101,Southern Packaging Traders,15
+V102,Malabar Office Supplies Services,45
+V103,Sahyadri Steel Services,45
+V104,Godavari Steel Traders,60
+V105,Konkan Printing Services,45
+V106,Sharma Office Supplies Traders,45
+V107,Sharma Printing Traders,15
+V108,Deccan Office Supplies Traders,60
+V109,Eastern Printing Services,15
+V110,Malabar Fasteners Traders,45
+V111,Southern Components Traders,45
+V112,Coastal Chemicals Traders,45
+V113,Nilgiri Printing Pvt Ltd,15
+V114,Sahyadri Steel Pvt Ltd,45
+V115,Konkan Electricals Industries,60
+V116,Coastal Components Traders,45
+V117,Malabar Freight Traders,15
+V118,Coastal Safety Services,45
+V119,Coastal Textiles Traders,30
+V120,Malabar Steel Pvt Ltd,15
+V121,Western Safety Services,15
+V122,Sharma Printing Industries,30
+V123,Godavari Office Supplies Traders,15
+V124,Godavari Fasteners Pvt Ltd,15
+V125,Vidarbha Packaging Industries,15
+V126,Vidarbha Electricals Pvt Ltd,30
+V127,Malabar Components Pvt Ltd,45
+V128,Coastal Freight Services,45
+V129,Konkan Electricals Traders,15
+V130,Malabar Textiles Services,60
+V131,Deccan Safety Services,30
+V132,Southern Printing Industries,45
+V133,Northern Freight Pvt Ltd,60
+V134,Kaveri Components Traders,60
+V135,Konkan Printing Pvt Ltd,60
+V136,Southern Fasteners Pvt Ltd,30
+V137,Nilgiri Safety Services,60
+V138,Tamil Packaging Industries,30
+V139,Sahyadri Logistics Services,30
+V140,Aravalli Fasteners Traders,30
+V141,Deccan Logistics Traders,15
+V142,Vidarbha Chemicals Services,60
+V143,Sharma Steel Industries,45
+V144,Kaveri Freight Industries,30
+V145,Sharma Packaging Pvt Ltd,30
+V146,Malabar Textiles Industries,15
+V147,Eastern Components Industries,15
+V148,Western Textiles Services,45
+V149,Kaveri Fasteners Traders,60
+V150,Sahyadri Office Supplies Services,60
+V151,Konkan Steel Traders,45
+V152,Tamil Electricals Services,45
+V153,Sharma Freight Traders,30
+V154,Eastern Freight Pvt Ltd,15
+V155,Konkan Printing Industries,30
+V156,Vidarbha Steel Traders,15
+V157,Deccan Steel Industries,45
+V158,Sharma Logistics Traders,45
+V159,Godavari Printing Pvt Ltd,45
+V160,Eastern Chemicals Traders,15
+V161,Eastern Steel Pvt Ltd,15
+V162,Coastal Chemicals Services,30
+V163,Tamil Safety Industries,60
+V164,Southern Logistics Pvt Ltd,15
+V165,Vidarbha Safety Traders,30
+V166,Coastal Logistics Pvt Ltd,30
+V167,Tamil Fasteners Industries,60
+V168,Coastal Fasteners Pvt Ltd,45
+V169,Northern Chemicals Traders,30
+V170,Kaveri Fasteners Industries,45
+V171,Aravalli Safety Services,45
+V172,Deccan Components Services,30
+V173,Eastern Textiles Traders,45
+V174,Godavari Electricals Traders,45
+V175,Coastal Fasteners Services,60
+V176,Vidarbha Printing Industries,60
+V177,Aravalli Steel Services,60
+V178,Deccan Office Supplies Pvt Ltd,45
+V179,Western Logistics Pvt Ltd,30
+V180,Sahyadri Office Supplies Traders,30
+V181,Vidarbha Steel Pvt Ltd,60
+V182,Northern Packaging Traders,30
+V183,Tamil Steel Pvt Ltd,60
+V184,Aravalli Steel Industries,15
+V185,Kaveri Electricals Services,45
+V186,Kaveri Logistics Pvt Ltd,60
+V187,Nilgiri Components Services,15
+V188,Nilgiri Electricals Traders,30
+V189,Sharma Electricals Industries,15
+V190,Eastern Packaging Services,45
+V191,Coastal Safety Industries,45
+V192,Coastal Logistics Services,45
+V193,Godavari Freight Services,30
+V194,Godavari Chemicals Industries,15
+V195,Northern Packaging Industries,15
+V196,Godavari Freight Traders,30
+V197,Southern Office Supplies Pvt Ltd,45
+V198,Northern Electricals Traders,15
+V199,Northern Electricals Services,60
+V200,Deccan Textiles Industries,60
+V201,Deccan Steel Traders,30
+V202,Southern Chemicals Traders,15
+V203,Sahyadri Components Services,15
+V204,Northern Electricals Pvt Ltd,30
+V205,Nilgiri Office Supplies Pvt Ltd,60

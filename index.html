@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accounts Payable Invoice Matcher</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --primary: #1d4ed8;
+      --primary-dark: #1e3a8a;
+      --shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      color: #ffffff;
+      padding: 2rem 1.25rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.9;
+    }
+
+    main {
+      padding: 1.5rem 1.25rem 3rem;
+    }
+
+    #status-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1e40af;
+      padding: 0.9rem 1.1rem;
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    #status-banner.error {
+      background: #fef2f2;
+      border-color: #fecaca;
+      color: #991b1b;
+    }
+
+    #status-banner.hidden {
+      display: none;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-value {
+      font-size: 1.65rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card.action .card-value {
+      color: #b91c1c;
+    }
+
+    .card.good .card-value {
+      color: #15803d;
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.5rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .filter-btn:hover {
+      background: #f1f5f9;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .table-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      overflow-x: auto;
+      margin-bottom: 1.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--muted);
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #f8fafc;
+    }
+
+    td.num, th.num {
+      text-align: right;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge-paid-on-time {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .badge-paid-late {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .badge-amount-mismatch {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+
+    .badge-unpaid-overdue {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .badge-unpaid-not-yet-due {
+      background: #e0f2fe;
+      color: #075985;
+    }
+
+    .badge-unknown-vendor {
+      background: #f3e8ff;
+      color: #6b21a8;
+    }
+
+    details {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 1rem 1.25rem;
+    }
+
+    summary {
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--primary-dark);
+      user-select: none;
+    }
+
+    pre {
+      margin-top: 1rem;
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 0.85rem;
+      line-height: 1.45;
+    }
+
+    .empty-row {
+      text-align: center;
+      color: var(--muted);
+      padding: 2rem 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1>Accounts Payable Invoice Matcher</h1>
+      <p id="as-of-text">Loading report date...</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="status-banner">Starting Python in your browser and checking files...</div>
+
+    <section class="cards" aria-label="Summary">
+      <div class="card">
+        <div class="card-label">Total Invoices</div>
+        <div class="card-value" id="card-total">-</div>
+      </div>
+      <div class="card good">
+        <div class="card-label">Paid On Time</div>
+        <div class="card-value" id="card-on-time">-</div>
+      </div>
+      <div class="card action">
+        <div class="card-label">Need Action</div>
+        <div class="card-value" id="card-action">-</div>
+      </div>
+      <div class="card action">
+        <div class="card-label">Amount At Risk</div>
+        <div class="card-value" id="card-risk">-</div>
+      </div>
+    </section>
+
+    <div class="filters" id="filter-bar" role="group" aria-label="Filter by status"></div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Invoice ID</th>
+            <th>Vendor</th>
+            <th class="num">Amount (Rs)</th>
+            <th>Due Date</th>
+            <th>Paid</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="invoice-tbody">
+          <tr>
+            <td colspan="6" class="empty-row">Waiting for Python results...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details>
+      <summary>View Python Code (reconcile.py)</summary>
+      <pre><code id="python-source">Loading code...</code></pre>
+    </details>
+  </main>
+
+  <script>
+    const STATUS_ORDER = [
+      "Paid on time",
+      "Paid late",
+      "Amount mismatch",
+      "Unpaid overdue",
+      "Unpaid not yet due",
+      "Unknown vendor"
+    ];
+
+    let allInvoices = [];
+    let activeFilter = "All";
+
+    function showBanner(message, isError = false) {
+      const banner = document.getElementById("status-banner");
+      banner.textContent = message;
+      banner.classList.remove("hidden", "error");
+      if (isError) {
+        banner.classList.add("error");
+      }
+    }
+
+    function hideBanner() {
+      const banner = document.getElementById("status-banner");
+      banner.classList.add("hidden");
+    }
+
+    function formatNumber(num) {
+      return Number(num).toLocaleString("en-IN");
+    }
+
+    function badgeClassForStatus(status) {
+      return "badge badge-" + status.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    }
+
+    function renderFilterButtons(counts, totalCount) {
+      const bar = document.getElementById("filter-bar");
+      bar.replaceChildren();
+
+      const items = [{ label: "All", count: totalCount }];
+      for (const status of STATUS_ORDER) {
+        items.push({ label: status, count: counts[status] || 0 });
+      }
+
+      for (const item of items) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "filter-btn" + (activeFilter === item.label ? " active" : "");
+        btn.textContent = item.label + " (" + item.count + ")";
+        btn.addEventListener("click", () => {
+          activeFilter = item.label;
+          renderFilterButtons(counts, totalCount);
+          renderTable();
+        });
+        bar.appendChild(btn);
+      }
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById("invoice-tbody");
+      tbody.replaceChildren();
+
+      const filtered = activeFilter === "All"
+        ? allInvoices
+        : allInvoices.filter(inv => inv.status === activeFilter);
+
+      if (filtered.length === 0) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = 6;
+        td.className = "empty-row";
+        td.textContent = "No invoices match this status.";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+
+      for (const inv of filtered) {
+        const tr = document.createElement("tr");
+
+        const tdId = document.createElement("td");
+        tdId.textContent = inv.invoice_id;
+        tr.appendChild(tdId);
+
+        const tdVendor = document.createElement("td");
+        tdVendor.textContent = inv.vendor_name + " (" + inv.vendor_id + ")";
+        tr.appendChild(tdVendor);
+
+        const tdAmount = document.createElement("td");
+        tdAmount.className = "num";
+        tdAmount.textContent = "Rs " + formatNumber(inv.amount);
+        tr.appendChild(tdAmount);
+
+        const tdDue = document.createElement("td");
+        tdDue.textContent = inv.due_date ? inv.due_date : "Not available";
+        tr.appendChild(tdDue);
+
+        const tdPaid = document.createElement("td");
+        tdPaid.textContent = inv.paid ? "Yes" : "No";
+        tr.appendChild(tdPaid);
+
+        const tdStatus = document.createElement("td");
+        const badge = document.createElement("span");
+        badge.className = badgeClassForStatus(inv.status);
+        badge.textContent = inv.status;
+        tdStatus.appendChild(badge);
+        tr.appendChild(tdStatus);
+
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function fetchTextFile(filename) {
+      const response = await fetch(filename);
+      if (!response.ok) {
+        throw new Error("Could not find or load '" + filename + "' (HTTP " + response.status + "). Make sure all project files are uploaded to the same folder.");
+      }
+      return await response.text();
+    }
+
+    async function runApp() {
+      try {
+        if (typeof loadPyodide !== "function") {
+          throw new Error("Python failed to load from the internet. Please check your connection and refresh the page.");
+        }
+
+        showBanner("Loading Python and reading project files...");
+
+        const [pyodide, pyCode, rulesText, vendorsText, invoicesText, paymentsText] = await Promise.all([
+          loadPyodide(),
+          fetchTextFile("reconcile.py"),
+          fetchTextFile("rules.json"),
+          fetchTextFile("vendors.csv"),
+          fetchTextFile("invoices.csv"),
+          fetchTextFile("payments.csv")
+        ]);
+
+        document.getElementById("python-source").textContent = pyCode;
+
+        showBanner("Running Python invoice check...");
+
+        pyodide.FS.writeFile("rules.json", rulesText);
+        pyodide.FS.writeFile("vendors.csv", vendorsText);
+        pyodide.FS.writeFile("invoices.csv", invoicesText);
+        pyodide.FS.writeFile("payments.csv", paymentsText);
+
+        let outputLine = "";
+        pyodide.setStdout({
+          batched: (text) => {
+            outputLine += text;
+          }
+        });
+
+        await pyodide.runPythonAsync(pyCode);
+
+        const trimmed = outputLine.trim();
+        if (!trimmed) {
+          throw new Error("reconcile.py finished without printing any output.");
+        }
+
+        const data = JSON.parse(trimmed);
+
+        document.getElementById("as-of-text").textContent = "Report date: " + data.as_of_date;
+
+        const counts = data.counts || {};
+        const needAction =
+          (counts["Amount mismatch"] || 0) +
+          (counts["Unpaid overdue"] || 0) +
+          (counts["Unknown vendor"] || 0);
+
+        document.getElementById("card-total").textContent = formatNumber(data.total_invoices);
+        document.getElementById("card-on-time").textContent = formatNumber(counts["Paid on time"] || 0);
+        document.getElementById("card-action").textContent = formatNumber(needAction);
+        document.getElementById("card-risk").textContent = "Rs " + formatNumber(data.amount_at_risk);
+
+        allInvoices = data.invoices || [];
+        renderFilterButtons(counts, data.total_invoices);
+        renderTable();
+        hideBanner();
+      } catch (err) {
+        showBanner("Error: " + err.message, true);
+        document.getElementById("invoice-tbody").replaceChildren();
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", runApp);
+  </script>
+</body>
+</html>
