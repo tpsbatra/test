@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Warehouse Shipment Summary</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      color: #1f2937;
+      background-color: #f9fafb;
+      margin: 0;
+      padding: 16px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      color: #111827;
+    }
+    h2 {
+      font-size: 1.15rem;
+      margin-top: 24px;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    p {
+      margin-top: 0;
+      color: #4b5563;
+    }
+    .status-banner {
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 16px;
+      font-weight: 500;
+      background-color: #eff6ff;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    .status-banner.ready {
+      background-color: #ecfdf5;
+      color: #065f46;
+      border-color: #a7f3d0;
+    }
+    .status-banner.error {
+      background-color: #fef2f2;
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 16px 0;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    #run-btn {
+      background-color: #2563eb;
+      color: #ffffff;
+    }
+    #run-btn:hover:not(:disabled) {
+      background-color: #1d4ed8;
+    }
+    #download-btn {
+      background-color: #059669;
+      color: #ffffff;
+    }
+    #download-btn:hover:not(:disabled) {
+      background-color: #047857;
+    }
+    pre {
+      background-color: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 12px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.875rem;
+      margin: 0;
+      white-space: pre;
+    }
+    .output-box {
+      background-color: #111827;
+      color: #f9fafb;
+      border-color: #374151;
+      min-height: 80px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Warehouse Shipment Summary</h1>
+    <p>This page runs a Python script directly in your browser to summarize warehouse orders from a CSV file.</p>
+
+    <div id="status" class="status-banner">Loading Python and project files... Please wait.</div>
+
+    <div class="button-group">
+      <button id="run-btn" disabled>Run the summary</button>
+      <button id="download-btn" disabled>Download summary.txt</button>
+    </div>
+
+    <h2>Program Output</h2>
+    <pre id="output" class="output-box">Press "Run the summary" to see the output here.</pre>
+
+    <h2>Expected Output</h2>
+    <pre id="expected-output">Shipped revenue by warehouse:
+Chennai: Rs 1800
+Madurai: Rs 0
+Pune: Rs 4085
+Orders cancelled: 1
+Warehouse with most pending orders: Chennai (2)
+Total shipped revenue: Rs 5885</pre>
+
+    <h2>Order Data (orders.csv)</h2>
+    <pre id="csv-display">Loading orders.csv...</pre>
+
+    <h2>Python Code (shipment_summary.py)</h2>
+    <pre id="code-display">Loading shipment_summary.py...</pre>
+  </div>
+
+  <script>
+    let pyodide = null;
+    let pythonCode = "";
+    let csvData = "";
+
+    const statusEl = document.getElementById("status");
+    const runBtn = document.getElementById("run-btn");
+    const downloadBtn = document.getElementById("download-btn");
+    const outputEl = document.getElementById("output");
+    const csvDisplayEl = document.getElementById("csv-display");
+    const codeDisplayEl = document.getElementById("code-display");
+
+    function showError(message) {
+      statusEl.textContent = message;
+      statusEl.className = "status-banner error";
+    }
+
+    async function init() {
+      try {
+        // Fetch both local files from the same folder
+        const [codeResponse, csvResponse] = await Promise.all([
+          fetch("shipment_summary.py"),
+          fetch("orders.csv")
+        ]);
+
+        if (!codeResponse.ok) {
+          throw new Error("Could not find shipment_summary.py. Make sure it is in the same folder as index.html.");
+        }
+        if (!csvResponse.ok) {
+          throw new Error("Could not find orders.csv. Make sure it is in the same folder as index.html.");
+        }
+
+        pythonCode = await codeResponse.text();
+        csvData = await csvResponse.text();
+
+        codeDisplayEl.textContent = pythonCode;
+        csvDisplayEl.textContent = csvData;
+      } catch (err) {
+        showError("File loading error: " + err.message + " (Note: If opening locally, use a local web server or GitHub Pages instead of double-clicking index.html.)");
+        return;
+      }
+
+      try {
+        if (typeof loadPyodide !== "function") {
+          throw new Error("Pyodide script failed to load from the internet.");
+        }
+        pyodide = await loadPyodide();
+
+        // Write orders.csv into Pyodide's virtual file system
+        pyodide.FS.writeFile("orders.csv", csvData);
+
+        statusEl.textContent = "Python and files are ready. Click 'Run the summary' to begin.";
+        statusEl.className = "status-banner ready";
+        runBtn.disabled = false;
+      } catch (err) {
+        showError("Python failed to load: " + err.message);
+      }
+    }
+
+    runBtn.addEventListener("click", async () => {
+      if (!pyodide) return;
+
+      runBtn.disabled = true;
+      outputEl.textContent = "Running Python script...";
+
+      try {
+        // Refresh orders.csv in the virtual file system before running
+        pyodide.FS.writeFile("orders.csv", csvData);
+
+        let printedLines = [];
+        pyodide.setStdout({
+          batched: (text) => {
+            printedLines.push(text);
+          }
+        });
+        pyodide.setStderr({
+          batched: (text) => {
+            printedLines.push("ERROR: " + text);
+          }
+        });
+
+        await pyodide.runPythonAsync(pythonCode);
+
+        outputEl.textContent = printedLines.join("\n");
+        downloadBtn.disabled = false;
+      } catch (err) {
+        outputEl.textContent = "Error while running Python code:\n" + err.message;
+      } finally {
+        runBtn.disabled = false;
+      }
+    });
+
+    downloadBtn.addEventListener("click", () => {
+      if (!pyodide) return;
+
+      try {
+        const summaryContent = pyodide.FS.readFile("summary.txt", { encoding: "utf8" });
+        const blob = new Blob([summaryContent], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "summary.txt";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        showError("Could not read summary.txt: " + err.message);
+      }
+    });
+
+    window.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>
